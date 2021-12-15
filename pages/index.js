@@ -8,7 +8,7 @@ export default function Home() {
     title: Yup.string().required("Le titre est requis"),
     firstName: Yup.string().required("Le prénom est obligatoire"),
     lastName: Yup.string().required("Le nom est obligatoire"),
-    dateBook: Yup.string()
+    dateBooked: Yup.string()
       .required("La date de la réservation est obligatoire")
       .matches(
         /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
@@ -30,8 +30,22 @@ export default function Home() {
   const { errors } = formState;
 
   function onSubmit(data) {
-    console.log(data);
-    
+    axios({
+      method: 'POST',
+      url: "https://api.gaylordjulien.dev/bookings",
+      data: data,
+    })
+    .then ((response) => {
+      const submitButton = document.getElementById('esnd');
+      submitButton.classList.add('disabled');
+      console.log("Données soumises avec succès", response.status);
+    })
+    .catch((err) =>{
+      alert(
+        "Malheureusement notre système de réservation n'est pas joignable pour le moment"
+      );
+    });
+
     return false;
   }
 
@@ -129,11 +143,15 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="form-group">
-                  <button type="submit" className="btn btn-primary me-1">
+                  <button type="submit" id="send" className="btn btn-primary me-1">
                     Envoyer
                   </button>
-                  <button type="button" onClick={() => reset()}>
-                    Remettre à 0
+                  <button
+                    type="button"
+                    onClick={() => reset()}
+                    className="btn btn-secondary"
+                  >
+                  Remettre à 0
                   </button>
                 </div>
               </div>
